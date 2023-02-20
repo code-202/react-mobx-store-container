@@ -5,6 +5,7 @@ const lodash_1 = require("lodash");
 class StoreContainer {
     stores;
     factories;
+    initiators = [];
     _initializeData = {};
     constructor() {
         (0, mobx_1.makeObservable)(this, {
@@ -97,6 +98,14 @@ class StoreContainer {
             if (factory.key === key) {
                 return factory;
             }
+        }
+    }
+    onInit(callback) {
+        this.initiators.push(callback);
+    }
+    init() {
+        for (const initiator of this.initiators) {
+            initiator();
         }
     }
     serialize() {

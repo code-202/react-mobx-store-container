@@ -4,9 +4,12 @@ import StoreFactory from './store-factory'
 
 interface StoreContainerData {[key: string]: any}
 
+type StoreContainerInitiator = () => void
+
 export default class StoreContainer {
     public stores: StoreContainerData
     public factories: StoreFactory[]
+    private initiators:StoreContainerInitiator[] = []
 
     protected _initializeData: StoreContainerData = {}
 
@@ -131,6 +134,16 @@ export default class StoreContainer {
             if (factory.key === key) {
                 return factory
             }
+        }
+    }
+
+    onInit (callback: StoreContainerInitiator): void {
+        this.initiators.push(callback)
+    }
+
+    init (): void {
+        for (const initiator of this.initiators) {
+            initiator()
         }
     }
 
